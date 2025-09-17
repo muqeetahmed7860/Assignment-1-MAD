@@ -1,0 +1,306 @@
+TASK-1
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Bidding App',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const MaximumBid(),
+    );
+  }
+}
+
+class MaximumBid extends StatefulWidget {
+  const MaximumBid({super.key});
+
+  @override
+  _MaximumBidState createState() => _MaximumBidState();
+}
+
+class _MaximumBidState extends State<MaximumBid> {
+  int bid = 0;
+
+  void increaseBid() {
+    setState(() {
+      bid += 50;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Bidding Page")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Your Maximum Bid: \$$bid",
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: increaseBid,
+              child: const Text("Increase Bid by \$50"),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+TASK-2
+
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Assignment Task 2",
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const InputPage(),
+    );
+  }
+}
+
+class InputPage extends StatefulWidget {
+  const InputPage({super.key});
+
+  @override
+  State<InputPage> createState() => _InputPageState();
+}
+
+class _InputPageState extends State<InputPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController numberController = TextEditingController();
+
+  List<int> numbers = [];
+  String result = "";
+
+  /// ✅ Add a number to the list
+  void addNumber() {
+    int? num = int.tryParse(numberController.text);
+    if (num != null) {
+      setState(() {
+        numbers.add(num);
+        numberController.clear();
+      });
+    }
+  }
+
+  /// ✅ Perform calculations
+  void calculate() {
+    String name = nameController.text.trim();
+    int age = int.tryParse(ageController.text) ?? 0;
+
+    // Age check
+    if (age < 18) {
+      setState(() {
+        result = "Sorry $name, you are not eligible to register.";
+      });
+      return;
+    }
+
+    if (numbers.isEmpty) {
+      setState(() {
+        result = "Please add at least one number!";
+      });
+      return;
+    }
+
+    int sumEven = 0;
+    int sumOdd = 0;
+    int largest = numbers[0];
+    int smallest = numbers[0];
+
+    for (int num in numbers) {
+      if (num % 2 == 0) {
+        sumEven += num;
+      } else {
+        sumOdd += num;
+      }
+
+      if (num > largest) largest = num;
+      if (num < smallest) smallest = num;
+    }
+
+    setState(() {
+      result = """
+Name: $name
+Age: $age
+
+Sum of Even Numbers: $sumEven
+Sum of Odd Numbers: $sumOdd
+Largest Number: $largest
+Smallest Number: $smallest
+""";
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Dart Input Example")),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Input fields
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Name'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: ageController,
+              decoration: const InputDecoration(labelText: 'Age'),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: numberController,
+              decoration: const InputDecoration(labelText: 'Enter a number'),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 10),
+
+            // Buttons
+            Row(
+              children: [
+                ElevatedButton(onPressed: addNumber, child: const Text("Add Number")),
+                const SizedBox(width: 10),
+                ElevatedButton(onPressed: calculate, child: const Text("Calculate")),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            // Show numbers list
+            if (numbers.isNotEmpty)
+              Text("Numbers: ${numbers.join(", ")}",
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+
+            const SizedBox(height: 20),
+
+            // Show result
+            Text(result, style: const TextStyle(fontSize: 16)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+TASK-3
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Number Pyramid',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const PyramidPage(),
+    );
+  }
+}
+
+class PyramidPage extends StatefulWidget {
+  const PyramidPage({super.key});
+
+  @override
+  State<PyramidPage> createState() => _PyramidPageState();
+}
+
+class _PyramidPageState extends State<PyramidPage> {
+  final TextEditingController nController = TextEditingController();
+  String patternResult = "";
+
+  /// ✅ Generate pyramid pattern
+  void generatePattern() {
+    int? n = int.tryParse(nController.text);
+    if (n == null || n <= 0) {
+      setState(() {
+        patternResult = "Please enter a valid positive number!";
+      });
+      return;
+    }
+
+    StringBuffer buffer = StringBuffer();
+
+    for (int i = 1; i <= n; i++) {
+      for (int j = 1; j <= i; j++) {
+        buffer.write("$j ");
+      }
+      buffer.writeln();
+    }
+
+    setState(() {
+      patternResult = buffer.toString();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Task 3: Number Pyramid")),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              controller: nController,
+              decoration: const InputDecoration(
+                labelText: "Enter n",
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: generatePattern,
+              child: const Text("Generate Pyramid"),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Text(
+                  patternResult,
+                  style: const TextStyle(fontSize: 18, height: 1.5),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
